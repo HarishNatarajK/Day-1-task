@@ -1,0 +1,89 @@
+HISTORY AND EVOLUTION OF HTTP:
+
+    HTTP (Hypertext Transfer Protocol) is a set of rules that runs on top of the TCP/IP suite of protocols and defines how files are to
+be transferred between clients and servers on the world wide web.
+    HTTP was widely used in the early 1990s to facilitate the transfer of "hypertext" documents. They were simple documents, mostly text
+and some images, tagged with HTML to add formatting and links to other hypertext documents. By 1996, Specification 1.0 was adopted. This
+version was slick and simple for my mid-90s internet needs: connecting, downloading files, disconnecting, iterating over all the files
+needed to display a web page.
+    In 1999, the overseeing body updated the HTTP spec to version 1.1. This version was a bit of a stopgap, adding features to the 1.0 
+specification meant to improve the speed and efficiency of web servers powering this new “hypermedia” version of the web.
+
+
+
+THE HTTP/1.1 TO HTTP/2 TRANSITION:
+
+    The breaking point in HTTP/1.1 was reached well before the 2015 introduction of HTTP/2. In fact, Google was working on its own
+replacement for HTTP/1.1 since the early 2010s, called SPDY (pronounced “speedy”). This protocol used the existing infrastructure built 
+for HTTP/1.1 but modified how the requests worked over the infrastructure. SPDY used multiplexing to download multiple resources
+efficiently over a single connection and could be “back-ported” to existing applications with a translation layer.
+    It makes sense that Google would take the lead on this, as they had been developing increasingly complex web-based applications 
+that operated more like desktop applications than websites, like Gmail and Google Apps. In fact, the SPDY protocol was so well-designed,
+W3 used it as the basis for HTTP/2.
+    So, in 2015, w3 officially adopted the HTTP/2 specification based on SPDY, and all major browsers began supporting the protocol.
+
+
+
+KEY FEATURES OF HTTP/1.1:
+
+    1)It was no longer required for each connection to be terminated immediately after every request was served with a response; 
+instead, with the keep-alive header, it was possible to have persistent connections. It allowed multiple requests/responses per TCP
+connection.
+    2)The Upgrade header was used to indicate a preference from the client that made it possible to switch to a more preferred protocol 
+if found appropriate by the server.
+    3)HTTP/1.1 provided support for chunk transfers that allowed streaming of content dynamically as chunks and for additional headers 
+to be sent after the message body. This enhancement was particularly useful in cases where values of a field remained unknown until the 
+content had been produced. For example, when the content had to be digitally signed, it was not possible to do so before the entire 
+content gets generated.
+    4)Other features that reinforced its stability were introduced such as:
+        (I)pipelining (the second request is sent before the response to the first is adequately served)
+        (II)content negotiation (an exchange between client and server to determine the media type, it also provides the provision to serve different versions of a resource at the same URI)
+        (III)cache control (used to specify caching policies in both requests and responses)
+
+
+
+KEY FEATURES OF HTTP/2:
+
+    1)It introduces the concept of a server push where the server anticipates the resources that will be required by the client and pushes
+them prior to the client making requests. The client retains the authority to deny the server push; however, in most cases, this
+feature adds a lot of efficiency to the process.
+    2)Introduces the concept of multiplexing that interleaves the requests and responses without head-of-line blocking and does so over a 
+single TCP connection.
+    3)It is a binary protocol i.e. only binary commands in the form of 0s and 1s are transmitted over the wire. The binary framing layer
+divides the message into frames that are segregated based on their type – Data or Header. This feature greatly increases efficiency in 
+terms of security, compression and multiplexing.
+    4)HTTP/2 uses HPACK header compression algorithm that is resilient to attacks like CRIME and utilizes static Huffman encoding.
+
+
+
+What are the other differences between HTTP/2 and HTTP/1.1 that impact performance?
+
+MULTIPLEXING: HTTP/1.1 loads resources one after the other, so if one resource cannot be loaded, it blocks all the other resources
+behind it. In contrast, HTTP/2 is able to use a single TCP connection to send multiple streams of data at once so that no one resource
+blocks any other resource. HTTP/2 does this by splitting data into binary-code messages and numbering these messages so that the client
+knows which stream each binary message belongs to.
+
+SERVER PUSH: Typically, a server only serves content to a client device if the client asks for it. However, this approach is not always
+practical for modern webpages, which often involve several dozen separate resources that the client must request. HTTP/2 solves this 
+problem by allowing a server to "push" content to a client before the client asks for it. The server also sends a message letting the 
+client know what pushed content to expect – like if Bob had sent Alice a Table of Contents of his novel before sending the whole thing.
+
+HEADER COMPRESSION: Small files load more quickly than large ones. To speed up web performance, both HTTP/1.1 and HTTP/2 compress HTTP 
+messages to make them smaller. However, HTTP/2 uses a more advanced compression method called HPACK that eliminates redundant information
+in HTTP header packets. This eliminates a few bytes from every HTTP packet. Given the volume of HTTP packets involved in loading even a 
+single webpage, those bytes add up quickly, resulting in faster loading.
+
+
+
+|                        HTTP/1.1                            |                        HTTP/2                            |       
+-------------------------------------------------------------------------------------------------------------------------                                                             |
+1)It uses the works on the textual format.                   |1)It works on the binary protocol.                           
+-------------------------------------------------------------------------------------------------------------------------
+2)There is head of line blocking that blocks all the requests|2)It allows multiplexing so one TCP connection is required
+  behind it until it doesn’t get its all resources.          |  for multiple requests.                                  
+-------------------------------------------------------------------------------------------------------------------------                                                             |
+3)It uses requests resource Inlining for use getting multiple|3)It uses PUSH frame by server that collects all multiple 
+  pages.                                                     |  pages.                                                  
+-------------------------------------------------------------------------------------------------------------------------                                                            |
+4)It compresses data by itself.                              |4)It uses HPACK for data compression.                        
+-------------------------------------------------------------------------------------------------------------------------                                   
